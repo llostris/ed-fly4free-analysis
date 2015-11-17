@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Fly4FreeExplorer.settings")
 
 from DataManager.models import City, Country, Airline
-from src.dataloaders import CITY_KEY, COUNTRY_KEY, AIRLINE_KEY
+from dataloaders.data_loader import CITY_KEY, COUNTRY_KEY, AIRLINE_KEY
 
 
 def get_objects(attribute):

@@ -2,10 +2,10 @@
 import operator
 from collections import defaultdict
 
-from Graphs.data_tools import get_objects
-from Graphs.dataloaders.data_loader import CITY_KEY, AIRLINE_KEY, TIME_KEY, COUNTRY_KEY
-from Graphs.dataloaders.json_data_loader import JsonDataLoader
-from Graphs.time_analysis import make_time_histogram
+from data_tools import get_objects
+from dataloaders.data_loader import CITY_KEY, AIRLINE_KEY, TIME_KEY, COUNTRY_KEY
+from dataloaders.json_data_loader import JsonDataLoader
+from time_analysis import make_time_histogram
 
 __author__ = 'Magda'
 

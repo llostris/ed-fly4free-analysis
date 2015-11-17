@@ -1,6 +1,6 @@
 import json
 
-from Graphs.dataloaders.data_loader import DataLoader
+from dataloaders.data_loader import DataLoader
 
 __author__ = 'Magda'
 
