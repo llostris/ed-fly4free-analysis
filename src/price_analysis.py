@@ -1,0 +1,101 @@
+import numpy as np
+import sys
+
+from collections import defaultdict
+
+from matplotlib import pyplot as plt
+
+from Graphs.data_tools import get_objects, get_column
+from Graphs.dataloaders.data_loader import COUNTRY_KEY, PRICE_KEY, CITY_KEY
+from Graphs.dataloaders.json_data_loader import JsonDataLoader
+
+
+class PriceAnalysisEntity:
+
+    def __init__(self, property, id, prices):
+        self.property = property
+        self.id = id
+        self.prices = prices
+        self.min = sys.maxsize
+        self.max = 0
+        self.median = 0
+        self.average = 0
+        self.name = get_objects(property).get(id=self.id).name
+
+    def calculate_values(self):
+        if len(self.prices) > 0:
+            self.min = min(self.prices)
+            self.max = max(self.prices)
+            self.average = np.mean(self.prices)
+            self.median = np.median(self.prices)
+
+    @staticmethod
+    def get_data_header():
+        return 'Name, min, max, median, average'
+
+    def get_formatted_row(self):
+        return '%s, %d, %d, %f, %f' % (self.name, self.min, self.max, self.median, self.average)
+
+
+def save_to_file(datalist, filename):
+    with open(filename, 'w+', encoding = 'utf-8') as f:
+        f.write(PriceAnalysisEntity.get_data_header())
+        f.write('\n')
+
+        for entity in datalist:
+            f.write(entity.get_formatted_row())
+            f.write('\n')
+        f.close()
+
+def group_by_property(offers, property):
+    results = defaultdict(list)
+    for offer in offers:
+        if len(offer[PRICE_KEY]) > 0:
+            results[offer[property]] += offer[PRICE_KEY]
+    print(results)
+
+    mapped = list(map(lambda x: PriceAnalysisEntity(property, x, results[x]), results))
+    for entity in mapped:
+        entity.calculate_values()
+
+    return mapped
+
+def order_by_price(data, property, reverse=False):
+    pass
+
+def make_box_plot(data, ids=None):
+    count = 0
+    def get_order_and_value(x, count=count):
+        count += 1
+        return (count, x.name)
+
+    if ids != None:
+        data = list(filter(lambda x: x.id in ids, data))
+    array_of_arrays = [ entity.prices for entity in data ]
+    xlabels = [ (order + 1, entity.name) for (order, entity) in zip(range(len(data)), data) ]
+    print(xlabels)
+    plt.boxplot(array_of_arrays)
+    ticks = plt.xticks(get_column(xlabels, 0), get_column(xlabels, 1), rotation=45, rotation_mode="anchor", ha="right")
+
+    plt.show()
+
+if __name__ == "__main__":
+    data_loader = JsonDataLoader(['./data/offers1.json',
+                                  # './data/offers2.json',
+                                  # './data/offers3.json',
+                                  # './data/offers4.json'
+                                  ])
+    data_loader.load()
+    data_loader.separate_offers()
+    data_loader.load_country_data()
+
+    grouped_by_country = group_by_property(data_loader.offers, COUNTRY_KEY)
+    save_to_file(grouped_by_country, 'results/prices_by_country.txt')
+    # print(grouped_by_country)
+
+    grouped_by_city = group_by_property(data_loader.offers, CITY_KEY)
+    save_to_file(grouped_by_city, 'results/prices_by_city.txt')
+    # print(grouped_by_city)
+
+    make_box_plot(grouped_by_country, [260, 9, 11, 12])
+    make_box_plot(grouped_by_country)
