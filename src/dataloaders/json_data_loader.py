@@ -10,4 +10,6 @@ class JsonDataLoader(DataLoader):
     def load(self):
         for filename in self.filenames:
             with open(filename) as f:
-                self.offers_combined += json.load(f)
+                self.offers += json.load(f)
+
+        self.prepare_data()
