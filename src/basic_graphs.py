@@ -39,8 +39,8 @@ def save_to_file(datalist, filename):
 
 
 if __name__ == "__main__":
-    data_loader = JsonDataLoader(['../data/offers2.json',
-                                  # '../data/offers2.json',
+    data_loader = JsonDataLoader(['../data/offers1.json',
+                                  '../data/offers2.json',
                                   # '../data/offers3.json',
                                   # '../data/offers4.json'
                                   ])
@@ -52,6 +52,7 @@ if __name__ == "__main__":
     offers = data_loader.offers
     print('Offers: ' + str(len(offers)))
     separated_offers = data_loader.offers_by_destination
+    print('Offers by destination: ' + str(len(separated_offers)))
 
     # most popular cites and countries
     popular_cities = most_popular(separated_offers, CITY_KEY)

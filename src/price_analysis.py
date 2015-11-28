@@ -5,9 +5,9 @@ from collections import defaultdict
 
 from matplotlib import pyplot as plt
 
-from Graphs.data_tools import get_objects, get_column
-from Graphs.dataloaders.data_loader import COUNTRY_KEY, PRICE_KEY, CITY_KEY
-from Graphs.dataloaders.json_data_loader import JsonDataLoader
+from data_tools import get_objects, get_column
+from dataloaders.data_loader import COUNTRY_KEY, PRICE_KEY, CITY_KEY, DESTINATION_KEY, SOURCES_KEY
+from dataloaders.json_data_loader import JsonDataLoader
 
 
 class PriceAnalysisEntity:
@@ -47,8 +47,10 @@ def save_to_file(datalist, filename):
             f.write('\n')
         f.close()
 
-def group_by_property(offers, property):
+
+def get_price_grouped_by_property(offers, property):
     results = defaultdict(list)
+    print(offers)
     for offer in offers:
         if len(offer[PRICE_KEY]) > 0:
             results[offer[property]] += offer[PRICE_KEY]
@@ -60,8 +62,10 @@ def group_by_property(offers, property):
 
     return mapped
 
+
 def order_by_price(data, property, reverse=False):
     pass
+
 
 def make_box_plot(data, ids=None):
     count = 0
@@ -75,9 +79,21 @@ def make_box_plot(data, ids=None):
     xlabels = [ (order + 1, entity.name) for (order, entity) in zip(range(len(data)), data) ]
     print(xlabels)
     plt.boxplot(array_of_arrays)
-    ticks = plt.xticks(get_column(xlabels, 0), get_column(xlabels, 1), rotation=45, rotation_mode="anchor", ha="right")
+    plt.xticks(get_column(xlabels, 0), get_column(xlabels, 1), rotation=45, rotation_mode="anchor", ha="right")
 
     plt.show()
+
+
+def sort_by_property(data, property, reverse=False):
+    def get_property_value(x, property):
+        if property == "average":
+            return x.average
+        elif property == "median":
+            return x.median
+    sorted_data = sorted(data, key = lambda x: get_property_value(x, property))
+    print(sorted_data)
+    return sorted_data
+
 
 if __name__ == "__main__":
     data_loader = JsonDataLoader(['./data/offers1.json',
@@ -86,14 +102,17 @@ if __name__ == "__main__":
                                   # './data/offers4.json'
                                   ])
     data_loader.load()
-    data_loader.separate_offers()
+    data_loader.separate_offers(DESTINATION_KEY)
+    data_loader.separate_offers(SOURCES_KEY)
     data_loader.load_country_data()
 
-    grouped_by_country = group_by_property(data_loader.offers, COUNTRY_KEY)
+    grouped_by_country = get_price_grouped_by_property(data_loader.offers_by_destination, COUNTRY_KEY)
+    grouped_by_country = sort_by_property(grouped_by_country, "average")
     save_to_file(grouped_by_country, 'results/prices_by_country.txt')
     # print(grouped_by_country)
 
-    grouped_by_city = group_by_property(data_loader.offers, CITY_KEY)
+    grouped_by_city = get_price_grouped_by_property(data_loader.offers_by_destination, CITY_KEY)
+    grouped_by_city = sort_by_property(grouped_by_city, "average")
     save_to_file(grouped_by_city, 'results/prices_by_city.txt')
     # print(grouped_by_city)
 

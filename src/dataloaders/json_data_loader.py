@@ -9,7 +9,7 @@ class JsonDataLoader(DataLoader):
 
     def load(self):
         for filename in self.filenames:
-            with open(filename) as f:
+            with open(filename, encoding = 'utf-8') as f:
                 self.offers += json.load(f)
 
         self.prepare_data()

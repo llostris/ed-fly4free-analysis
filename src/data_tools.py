@@ -25,6 +25,13 @@ def get_column(array, index):
         column.append(row[index])
     return column
 
+
+def find_key_for_value(dictionary, searched_value):
+    for key, value in dictionary.items():
+        if value == searched_value:
+            return key
+
+
 def set_plot_settings(title, xlabel, ylabel):
     plt.title(title)
     plt.xlabel(xlabel)

@@ -1,6 +1,9 @@
+import locale
 import os
 
 # load Django settings - must be done before loading any Django objects!
+from parsers.date_parser import DateParser
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Fly4FreeExplorer.settings")
 
 from DataManager.models import City, Airline
@@ -11,6 +14,7 @@ __author__ = 'Magda'
 CITY_KEY = "cities"
 AIRLINE_KEY = "airlines"
 TIME_KEY = "time"
+DATE_KEY = "date"
 COUNTRY_KEY = "country"
 PRICE_KEY = "prices"
 SOURCES_KEY = "sources"
@@ -25,6 +29,7 @@ class DataLoader:
         self.offers_by_source = []
         self.filenames = filenames
         self.colon_regexp = r'(:)(?=(?:[^"]|"[^"]*")*$)'
+        self.date_parser = DateParser()
 
     def separate_offers(self, property=DESTINATION_KEY):
         separated_offers = []
@@ -35,6 +40,7 @@ class DataLoader:
                     separated_offer = dict()
                     separated_offer[AIRLINE_KEY] = offer[AIRLINE_KEY]
                     separated_offer[TIME_KEY] = offer[TIME_KEY]
+                    separated_offer[DATE_KEY] = self.parse_date(offer[DATE_KEY])
                     separated_offer[PRICE_KEY] = offer[PRICE_KEY]
                     separated_offer[property] = city
                     separated_offer[CITY_KEY] = city
@@ -74,6 +80,9 @@ class DataLoader:
             price_int = int(price.replace(' PLN', ''))
             parsed.append(price_int)
         return parsed
+
+    def parse_date(self, date):
+        return self.date_parser.parse_date(date)
 
     def prepare_data(self):
         for offer in self.offers:
