@@ -1,4 +1,5 @@
 .idea/
 __pycache__/
 results/
+data/csv/avg_comment_count_by_price.csv
 data/csv/

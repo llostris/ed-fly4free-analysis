@@ -88,8 +88,10 @@ def destination_prices_by_months(offers_by_destination, property, top=50):
 
             f.write('\n')
 
+    return results
 
-def popular_destinations_by_month(offers_by_destination, property, top=50):
+
+def popular_destinations_by_month(offers_by_destination, property, top=50, save_to_file=True):
     grouped_by_month = group_by_property(offers_by_destination, 'month')
     results = defaultdict()
     for month in grouped_by_month:
@@ -103,17 +105,20 @@ def popular_destinations_by_month(offers_by_destination, property, top=50):
 
     labels = date_parser.get_month_label(grouped_by_month)
 
-    with open(RESULTS_DIR + property + '_by_month.txt', 'w+', encoding = 'utf-8') as f:
-        for month, countries_and_counts in results.items():
-            f.write(labels[month])
-            f.write('\n-----------\n')
+    if save_to_file:
+        with open(RESULTS_DIR + property + '_by_month.txt', 'w+', encoding = 'utf-8') as f:
+            for month, countries_and_counts in results.items():
+                f.write(labels[month])
+                f.write('\n-----------\n')
 
-            for country, counts in countries_and_counts[:top]:
-                country_name = data_tools.get_objects(property).get(id=country).name
-                f.write(country_name + ' ' + str(counts))
-                f.write('\n')
+                for country, counts in countries_and_counts[:top]:
+                    country_name = data_tools.get_objects(property).get(id=country).name
+                    f.write(country_name + ' ' + str(counts))
+                    f.write('\n')
 
             f.write('\n')
+
+    return results
 
 
 def price_in_time(offers_by_destination, property, ids=None):

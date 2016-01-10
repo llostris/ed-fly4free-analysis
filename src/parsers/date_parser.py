@@ -2,6 +2,12 @@
 
 import datetime
 
+class Season:
+    def __init__(self, name, start, end):
+        self.name = name
+        self.start = start
+        self.end = end
+
 
 class DateParser:
 
@@ -20,6 +26,16 @@ class DateParser:
             'listopada' : 11,
             'grudnia' : 12
         }
+        self.seasons = {
+            'winter' : [ 1, 2, 3 ],
+            'spring' : [ 4, 5, 6 ],
+            'summer' : [ 7, 8, 9 ],
+            'autumn' : [ 10, 11, 12]
+        }
+        # self.season_dates = {
+        #     'summer' : Season('summer', datetime.date(month=6, day=23)),
+        #     'autumn' : Season('autumn', datetime.date(month=9, day = 23)),
+        # }
 
 
     def parse_date(self, date_str):
